@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+  <!--
+    agnes::pointer<T*...> where:
+      - all T* are the same type or AGNES_POINTER_NO_CONST_EVAL != 0.
+
+    If AGNES_POINTER_NO_CONST_EVAL == 0, the underlying agnes::internal_::pointer_tuple<T...> will have member
+      std::array<std::tuple_element_t<0, std::tuple<T...>>*, sizeof...(T)> ptrs_;
+
+    If AGNES_POINTER_NO_CONST_EVAL != 0, the underlying agnes::internal_::pointer_tuple<T...> will have member
+      std::array<void*, sizeof...(T)> ptrs_;
+  -->
+
+  <Type Name="agnes::pointer&lt;*&gt;">
+    <Intrinsic Name="require_homogeneous" Expression="sizeof(impl_.ptrs_.ptrs_._Elems) != 0"/>
+    <Intrinsic Name="homogeneous_ptr_at" Expression="impl_.ptrs_.ptrs_._Elems[i]">
+      <Parameter Name="i" Type="int"/>
+    </Intrinsic>
+    <Intrinsic Name="homogeneous_ptr00" Expression="($T1 )homogeneous_ptr_at( 0) + impl_.i_"/>
+    <Intrinsic Name="homogeneous_ptr01" Expression="($T2 )homogeneous_ptr_at( 1) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr02" Expression="($T3 )homogeneous_ptr_at( 2) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr03" Expression="($T4 )homogeneous_ptr_at( 3) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr04" Expression="($T5 )homogeneous_ptr_at( 4) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr05" Expression="($T6 )homogeneous_ptr_at( 5) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr06" Expression="($T7 )homogeneous_ptr_at( 6) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr07" Expression="($T8 )homogeneous_ptr_at( 7) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr08" Expression="($T9 )homogeneous_ptr_at( 8) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr09" Expression="($T10)homogeneous_ptr_at( 9) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr10" Expression="($T11)homogeneous_ptr_at(10) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr11" Expression="($T12)homogeneous_ptr_at(11) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr12" Expression="($T13)homogeneous_ptr_at(12) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr13" Expression="($T14)homogeneous_ptr_at(13) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr14" Expression="($T15)homogeneous_ptr_at(14) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_ptr15" Expression="($T16)homogeneous_ptr_at(15) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_is_null" Expression="homogeneous_ptr00() == nullptr"/>
+    <DisplayString Condition="homogeneous_is_null()">{{ null }}</DisplayString>
+    <DisplayString Condition="(sizeof($T5) != 0)" Optional="true">{homogeneous_ptr00()}, {homogeneous_ptr01()}, {homogeneous_ptr02()}, {homogeneous_ptr03()}, ...</DisplayString>
+    <DisplayString                                Optional="true">{homogeneous_ptr00()}, {homogeneous_ptr01()}, {homogeneous_ptr02()}, {homogeneous_ptr03()}</DisplayString>
+    <DisplayString                                Optional="true">{homogeneous_ptr00()}, {homogeneous_ptr01()}, {homogeneous_ptr02()}</DisplayString>
+    <DisplayString                                Optional="true">{homogeneous_ptr00()}, {homogeneous_ptr01()}</DisplayString>
+    <DisplayString                                Optional="true">{homogeneous_ptr00()}</DisplayString>
+    <Expand>
+      <Item Name= "&lt;0&gt;"                >homogeneous_ptr00()</Item>
+      <Item Name= "&lt;1&gt;" Optional="true">homogeneous_ptr01()</Item>
+      <Item Name= "&lt;2&gt;" Optional="true">homogeneous_ptr02()</Item>
+      <Item Name= "&lt;3&gt;" Optional="true">homogeneous_ptr03()</Item>
+      <Item Name= "&lt;4&gt;" Optional="true">homogeneous_ptr04()</Item>
+      <Item Name= "&lt;5&gt;" Optional="true">homogeneous_ptr05()</Item>
+      <Item Name= "&lt;6&gt;" Optional="true">homogeneous_ptr06()</Item>
+      <Item Name= "&lt;7&gt;" Optional="true">homogeneous_ptr07()</Item>
+      <Item Name= "&lt;8&gt;" Optional="true">homogeneous_ptr08()</Item>
+      <Item Name= "&lt;9&gt;" Optional="true">homogeneous_ptr09()</Item>
+      <Item Name="&lt;10&gt;" Optional="true">homogeneous_ptr10()</Item>
+      <Item Name="&lt;11&gt;" Optional="true">homogeneous_ptr11()</Item>
+      <Item Name="&lt;12&gt;" Optional="true">homogeneous_ptr12()</Item>
+      <Item Name="&lt;13&gt;" Optional="true">homogeneous_ptr13()</Item>
+      <Item Name="&lt;14&gt;" Optional="true">homogeneous_ptr14()</Item>
+      <Item Name="&lt;15&gt;" Optional="true">homogeneous_ptr15()</Item>
+    </Expand>
+  </Type>
+
+  <!--
+    agnes::pointer<T*...> where:
+      - all T* are not the same type
+      - AGNES_POINTER_NO_CONST_EVAL == 0
+      - AGNES_POINTER_NON_CONST_EVAL_OPTIMIZATION != 0.
+
+    The underlying agnes::internal_::pointer_tuple<T0, T...> will have members
+      T0*                               ptr0_;
+      union
+      {
+      	std::array<void*, sizeof...(T)> aptrs_;
+      	std::tuple<T*...>               tptrs_;
+      };
+      const bool                        aptrs_active_;
+  -->
+
+  <Type Name="agnes::pointer&lt;*&gt;">
+    <Intrinsic Name="require_optimized_heterogeneous" Expression="sizeof(impl_.ptrs_.aptrs_active_) != 0"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr_at" Expression="(i == 0) ? impl_.ptrs_.ptr0_ : (impl_.ptrs_.aptrs_active_ ? impl_.ptrs_.aptrs_._Elems[i - 1] : ((void**)&amp;impl_.ptrs_.tptrs_)[sizeof(impl_.ptrs_.tptrs_)/sizeof(void*) - i])">
+      <Parameter Name="i" Type="int"/>
+    </Intrinsic>
+    <Intrinsic Name="optimized_heterogeneous_ptr00" Expression="($T1 )optimized_heterogeneous_ptr_at( 0) + impl_.i_"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr01" Expression="($T2 )optimized_heterogeneous_ptr_at( 1) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr02" Expression="($T3 )optimized_heterogeneous_ptr_at( 2) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr03" Expression="($T4 )optimized_heterogeneous_ptr_at( 3) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr04" Expression="($T5 )optimized_heterogeneous_ptr_at( 4) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr05" Expression="($T6 )optimized_heterogeneous_ptr_at( 5) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr06" Expression="($T7 )optimized_heterogeneous_ptr_at( 6) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr07" Expression="($T8 )optimized_heterogeneous_ptr_at( 7) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr08" Expression="($T9 )optimized_heterogeneous_ptr_at( 8) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr09" Expression="($T10)optimized_heterogeneous_ptr_at( 9) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr10" Expression="($T11)optimized_heterogeneous_ptr_at(10) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr11" Expression="($T12)optimized_heterogeneous_ptr_at(11) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr12" Expression="($T13)optimized_heterogeneous_ptr_at(12) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr13" Expression="($T14)optimized_heterogeneous_ptr_at(13) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr14" Expression="($T15)optimized_heterogeneous_ptr_at(14) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr15" Expression="($T16)optimized_heterogeneous_ptr_at(15) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_is_null" Expression="optimized_heterogeneous_ptr00() == nullptr"/>
+    <DisplayString Condition="optimized_heterogeneous_is_null()">{{ null }}</DisplayString>
+    <DisplayString Condition="sizeof($T5) != 0" Optional="true">{optimized_heterogeneous_ptr00()}, {optimized_heterogeneous_ptr01()}, {optimized_heterogeneous_ptr02()}, {optimized_heterogeneous_ptr03(), ...}</DisplayString>
+    <DisplayString                              Optional="true">{optimized_heterogeneous_ptr00()}, {optimized_heterogeneous_ptr01()}, {optimized_heterogeneous_ptr02()}, {optimized_heterogeneous_ptr03()}</DisplayString>
+    <DisplayString                              Optional="true">{optimized_heterogeneous_ptr00()}, {optimized_heterogeneous_ptr01()}, {optimized_heterogeneous_ptr02()}</DisplayString>
+    <DisplayString                              Optional="true">{optimized_heterogeneous_ptr00()}, {optimized_heterogeneous_ptr01()}</DisplayString>
+    <DisplayString                              Optional="true">{optimized_heterogeneous_ptr00()}</DisplayString>
+    <Expand>
+      <Item Name= "&lt;0&gt;"                >optimized_heterogeneous_ptr00()</Item>
+      <Item Name= "&lt;1&gt;" Optional="true">optimized_heterogeneous_ptr01()</Item>
+      <Item Name= "&lt;2&gt;" Optional="true">optimized_heterogeneous_ptr02()</Item>
+      <Item Name= "&lt;3&gt;" Optional="true">optimized_heterogeneous_ptr03()</Item>
+      <Item Name= "&lt;4&gt;" Optional="true">optimized_heterogeneous_ptr04()</Item>
+      <Item Name= "&lt;5&gt;" Optional="true">optimized_heterogeneous_ptr05()</Item>
+      <Item Name= "&lt;6&gt;" Optional="true">optimized_heterogeneous_ptr06()</Item>
+      <Item Name= "&lt;7&gt;" Optional="true">optimized_heterogeneous_ptr07()</Item>
+      <Item Name= "&lt;8&gt;" Optional="true">optimized_heterogeneous_ptr08()</Item>
+      <Item Name= "&lt;9&gt;" Optional="true">optimized_heterogeneous_ptr09()</Item>
+      <Item Name="&lt;10&gt;" Optional="true">optimized_heterogeneous_ptr10()</Item>
+      <Item Name="&lt;11&gt;" Optional="true">optimized_heterogeneous_ptr11()</Item>
+      <Item Name="&lt;12&gt;" Optional="true">optimized_heterogeneous_ptr12()</Item>
+      <Item Name="&lt;13&gt;" Optional="true">optimized_heterogeneous_ptr13()</Item>
+      <Item Name="&lt;14&gt;" Optional="true">optimized_heterogeneous_ptr14()</Item>
+      <Item Name="&lt;15&gt;" Optional="true">optimized_heterogeneous_ptr15()</Item>
+    </Expand>
+  </Type>
+
+  <!--
+    agnes::pointer<T*...> where:
+      - all T* are not the same type
+      - AGNES_POINTER_NO_CONST_EVAL == 0
+      - AGNES_POINTER_NON_CONST_EVAL_OPTIMIZATION == 0.
+
+    The underlying agnes::internal_::pointer_tuple<T0, T...> will have members
+      T0*               ptr0_;
+      std::tuple<T*...> ptrs_;
+  -->
+
+  <Type Name="agnes::pointer&lt;*&gt;">
+    <Intrinsic Name="require_non_optimized_heterogeneous" Expression="sizeof(impl_.ptrs_.ptrs_._Myfirst) != 0"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr_at" Expression="(i == 0) ? impl_.ptrs_.ptr0_ : ((void**)&amp;impl_.ptrs_.ptrs_)[sizeof(impl_.ptrs_.ptrs_)/sizeof(void*) - i]">
+      <Parameter Name="i" Type="int"/>
+    </Intrinsic>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr00" Expression="($T1 )non_optimized_heterogeneous_ptr_at( 0) + impl_.i_"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr01" Expression="($T2 )non_optimized_heterogeneous_ptr_at( 1) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr02" Expression="($T3 )non_optimized_heterogeneous_ptr_at( 2) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr03" Expression="($T4 )non_optimized_heterogeneous_ptr_at( 3) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr04" Expression="($T5 )non_optimized_heterogeneous_ptr_at( 4) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr05" Expression="($T6 )non_optimized_heterogeneous_ptr_at( 5) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr06" Expression="($T7 )non_optimized_heterogeneous_ptr_at( 6) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr07" Expression="($T8 )non_optimized_heterogeneous_ptr_at( 7) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr08" Expression="($T9 )non_optimized_heterogeneous_ptr_at( 8) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr09" Expression="($T10)non_optimized_heterogeneous_ptr_at( 9) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr10" Expression="($T11)non_optimized_heterogeneous_ptr_at(10) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr11" Expression="($T12)non_optimized_heterogeneous_ptr_at(11) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr12" Expression="($T13)non_optimized_heterogeneous_ptr_at(12) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr13" Expression="($T14)non_optimized_heterogeneous_ptr_at(13) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr14" Expression="($T15)non_optimized_heterogeneous_ptr_at(14) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr15" Expression="($T16)non_optimized_heterogeneous_ptr_at(15) + impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_is_null" Expression="non_optimized_heterogeneous_ptr00() == nullptr"/>
+    <DisplayString Condition="non_optimized_heterogeneous_is_null()">{{ null }}</DisplayString>
+    <DisplayString Condition="sizeof($T5) != 0" Optional="true">{non_optimized_heterogeneous_ptr00()}, {non_optimized_heterogeneous_ptr01()}, {non_optimized_heterogeneous_ptr02()}, {non_optimized_heterogeneous_ptr03(), ...}</DisplayString>
+    <DisplayString                              Optional="true">{non_optimized_heterogeneous_ptr00()}, {non_optimized_heterogeneous_ptr01()}, {non_optimized_heterogeneous_ptr02()}, {non_optimized_heterogeneous_ptr03()}</DisplayString>
+    <DisplayString                              Optional="true">{non_optimized_heterogeneous_ptr00()}, {non_optimized_heterogeneous_ptr01()}, {non_optimized_heterogeneous_ptr02()}</DisplayString>
+    <DisplayString                              Optional="true">{non_optimized_heterogeneous_ptr00()}, {non_optimized_heterogeneous_ptr01()}</DisplayString>
+    <DisplayString                              Optional="true">{non_optimized_heterogeneous_ptr00()}</DisplayString>
+    <Expand>
+      <Item Name= "&lt;0&gt;"                >non_optimized_heterogeneous_ptr00()</Item>
+      <Item Name= "&lt;1&gt;" Optional="true">non_optimized_heterogeneous_ptr01()</Item>
+      <Item Name= "&lt;2&gt;" Optional="true">non_optimized_heterogeneous_ptr02()</Item>
+      <Item Name= "&lt;3&gt;" Optional="true">non_optimized_heterogeneous_ptr03()</Item>
+      <Item Name= "&lt;4&gt;" Optional="true">non_optimized_heterogeneous_ptr04()</Item>
+      <Item Name= "&lt;5&gt;" Optional="true">non_optimized_heterogeneous_ptr05()</Item>
+      <Item Name= "&lt;6&gt;" Optional="true">non_optimized_heterogeneous_ptr06()</Item>
+      <Item Name= "&lt;7&gt;" Optional="true">non_optimized_heterogeneous_ptr07()</Item>
+      <Item Name= "&lt;8&gt;" Optional="true">non_optimized_heterogeneous_ptr08()</Item>
+      <Item Name= "&lt;9&gt;" Optional="true">non_optimized_heterogeneous_ptr09()</Item>
+      <Item Name="&lt;10&gt;" Optional="true">non_optimized_heterogeneous_ptr10()</Item>
+      <Item Name="&lt;11&gt;" Optional="true">non_optimized_heterogeneous_ptr11()</Item>
+      <Item Name="&lt;12&gt;" Optional="true">non_optimized_heterogeneous_ptr12()</Item>
+      <Item Name="&lt;13&gt;" Optional="true">non_optimized_heterogeneous_ptr13()</Item>
+      <Item Name="&lt;14&gt;" Optional="true">non_optimized_heterogeneous_ptr14()</Item>
+      <Item Name="&lt;15&gt;" Optional="true">non_optimized_heterogeneous_ptr15()</Item>
+    </Expand>
+  </Type>
+
+  <!--
+    agnes::contiguous_base<Allocator, T...> where:
+      - all T are the same type or AGNES_POINTER_NO_CONST_EVAL != 0.
+
+    If AGNES_POINTER_NO_CONST_EVAL == 0, the underlying agnes::internal_::pointer_tuple<T...> instances will have member
+      std::array<std::tuple_element_t<0, std::tuple<T...>>*, sizeof...(T)> ptrs_;
+
+    If AGNES_POINTER_NO_CONST_EVAL != 0, the underlying agnes::internal_::pointer_tuple<T...> instances will have member
+      std::array<void*, sizeof...(T)> ptrs_;
+
+    Inherited by agnes::vector and agnes::table.
+  -->
+
+  <Type Name="agnes::internal_::contiguous_base&lt;*&gt;" Inheritable="true">
+    <Intrinsic Name="require_homogeneous" Expression="sizeof(first_.p_.impl_.ptrs_.ptrs_._Elems) != 0"/>
+    <Intrinsic Name="homogeneous_first_at" Expression="first_.p_.impl_.ptrs_.ptrs_._Elems[i]">
+      <Parameter Name="i" Type="int"/>
+    </Intrinsic>
+    <Intrinsic Name="homogeneous_first00" Expression="($T2* )homogeneous_first_at( 0) + first_.p_.impl_.i_"/>
+    <Intrinsic Name="homogeneous_first01" Expression="($T3* )homogeneous_first_at( 1) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_first02" Expression="($T4* )homogeneous_first_at( 2) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_first03" Expression="($T5* )homogeneous_first_at( 3) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_first04" Expression="($T6* )homogeneous_first_at( 4) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_first05" Expression="($T7* )homogeneous_first_at( 5) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_first06" Expression="($T8* )homogeneous_first_at( 6) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_first07" Expression="($T9* )homogeneous_first_at( 7) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="homogeneous_last00" Expression="($T2* )last_.p_.impl_.ptrs_.ptrs_._Elems[0] + last_.p_.impl_.i_"/>
+    <Intrinsic Name="homogeneous_cap00"  Expression="($T2* ) cap_.p_.impl_.ptrs_.ptrs_._Elems[0] +  cap_.p_.impl_.i_"/>
+    <Intrinsic Name="homogeneous_size"     Expression="homogeneous_last00() - homogeneous_first00()"/>
+    <Intrinsic Name="homogeneous_capacity" Expression="homogeneous_cap00()  - homogeneous_first00()"/>
+    <DisplayString>{{ size={homogeneous_size()} }}</DisplayString>
+    <Expand>
+      <Item Name="[capacity]" ExcludeView="simple">homogeneous_capacity()</Item>
+      <Item Name="[allocator]" ExcludeView="simple">alloc_</Item>
+      <Synthetic Name="&lt;0&gt;">
+        <Expand>
+          <ArrayItems>
+            <Size>homogeneous_size()</Size>
+            <ValuePointer>homogeneous_first00()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;1&gt;" Condition="sizeof($T3) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>homogeneous_size()</Size>
+            <ValuePointer>homogeneous_first01()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;2&gt;" Condition="sizeof($T4) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>homogeneous_size()</Size>
+            <ValuePointer>homogeneous_first02()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;3&gt;" Condition="sizeof($T5) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>homogeneous_size()</Size>
+            <ValuePointer>homogeneous_first03()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;4&gt;" Condition="sizeof($T6) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>homogeneous_size()</Size>
+            <ValuePointer>homogeneous_first04()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;5&gt;" Condition="sizeof($T7) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>homogeneous_size()</Size>
+            <ValuePointer>homogeneous_first05()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;6&gt;" Condition="sizeof($T8) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>homogeneous_size()</Size>
+            <ValuePointer>homogeneous_first06()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;7&gt;" Condition="sizeof($T9) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>homogeneous_size()</Size>
+            <ValuePointer>homogeneous_first07()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+    </Expand>
+  </Type>
+
+  <!--
+    agnes::contiguous_base<Allocator, T*...> where:
+      - all T are not the same type
+      - AGNES_POINTER_NO_CONST_EVAL == 0
+      - AGNES_POINTER_NON_CONST_EVAL_OPTIMIZATION != 0.
+
+    The underlying agnes::internal_::pointer_tuple<T0, T...> instances will have members
+      T0*                               ptr0_;
+      union
+      {
+      	std::array<void*, sizeof...(T)> aptrs_;
+      	std::tuple<T*...>               tptrs_;
+      };
+      const bool                        aptrs_active_;
+
+    Inherited by agnes::vector and agnes::table.
+  -->
+
+  <Type Name="agnes::internal_::contiguous_base&lt;*&gt;" Inheritable="true">
+    <Intrinsic Name="require_optimized_heterogeneous" Expression="sizeof(first_.p_.impl_.ptrs_.aptrs_active_) != 0"/>
+    <Intrinsic Name="optimized_heterogeneous_ptr_at" Expression="(i == 0) ? first_.p_.impl_.ptrs_.ptr0_ : (first_.p_.impl_.ptrs_.aptrs_active_ ? first_.p_.impl_.ptrs_.aptrs_._Elems[i - 1] : ((void**)&amp;first_.p_.impl_.ptrs_.tptrs_)[sizeof(first_.p_.impl_.ptrs_.tptrs_)/sizeof(void*) - i])">
+      <Parameter Name="i" Type="int"/>
+    </Intrinsic>
+    <Intrinsic Name="optimized_heterogeneous_first00" Expression="($T2* )optimized_heterogeneous_ptr_at( 0) + first_.p_.impl_.i_"/>
+    <Intrinsic Name="optimized_heterogeneous_first01" Expression="($T3* )optimized_heterogeneous_ptr_at( 1) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_first02" Expression="($T4* )optimized_heterogeneous_ptr_at( 2) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_first03" Expression="($T5* )optimized_heterogeneous_ptr_at( 3) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_first04" Expression="($T6* )optimized_heterogeneous_ptr_at( 4) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_first05" Expression="($T7* )optimized_heterogeneous_ptr_at( 5) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_first06" Expression="($T8* )optimized_heterogeneous_ptr_at( 6) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_first07" Expression="($T9* )optimized_heterogeneous_ptr_at( 7) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="optimized_heterogeneous_last00" Expression="($T2*)last_.p_.impl_.ptrs_.ptr0_ + last_.p_.impl_.i_"/>
+    <Intrinsic Name="optimized_heterogeneous_cap00"  Expression="($T2*) cap_.p_.impl_.ptrs_.ptr0_ +  cap_.p_.impl_.i_"/>
+    <Intrinsic Name="optimized_heterogeneous_size"     Expression="optimized_heterogeneous_last00() - optimized_heterogeneous_first00()"/>
+    <Intrinsic Name="optimized_heterogeneous_capacity" Expression="optimized_heterogeneous_cap00()  - optimized_heterogeneous_first00()"/>
+    <DisplayString>{{ size={optimized_heterogeneous_size()} }}</DisplayString>
+    <Expand>
+      <Item Name="[capacity]" ExcludeView="simple">optimized_heterogeneous_capacity()</Item>
+      <Item Name="[allocator]" ExcludeView="simple">alloc_</Item>
+      <Synthetic Name="&lt;0&gt;">
+        <Expand>
+          <ArrayItems>
+            <Size>optimized_heterogeneous_size()</Size>
+            <ValuePointer>optimized_heterogeneous_first00()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;1&gt;" Condition="sizeof($T3) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>optimized_heterogeneous_size()</Size>
+            <ValuePointer>optimized_heterogeneous_first01()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;2&gt;" Condition="sizeof($T4) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>optimized_heterogeneous_size()</Size>
+            <ValuePointer>optimized_heterogeneous_first02()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;3&gt;" Condition="sizeof($T5) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>optimized_heterogeneous_size()</Size>
+            <ValuePointer>optimized_heterogeneous_first03()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;4&gt;" Condition="sizeof($T6) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>optimized_heterogeneous_size()</Size>
+            <ValuePointer>optimized_heterogeneous_first04()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;5&gt;" Condition="sizeof($T7) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>optimized_heterogeneous_size()</Size>
+            <ValuePointer>optimized_heterogeneous_first05()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;6&gt;" Condition="sizeof($T8) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>optimized_heterogeneous_size()</Size>
+            <ValuePointer>optimized_heterogeneous_first06()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;7&gt;" Condition="sizeof($T9) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>optimized_heterogeneous_size()</Size>
+            <ValuePointer>optimized_heterogeneous_first07()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+    </Expand>
+  </Type>
+
+  <!--
+    agnes::contiguous_base<Allocator, T...> where:
+      - all T are not the same type
+      - AGNES_POINTER_NO_CONST_EVAL == 0
+      - AGNES_POINTER_NON_CONST_EVAL_OPTIMIZATION == 0.
+
+    The underlying agnes::internal_::pointer_tuple<T0, T...> instances will have members
+      T0*               ptr0_;
+      std::tuple<T*...> ptrs_;
+
+    Inherited by agnes::vector and agnes::table.
+  -->
+
+  <Type Name="agnes::internal_::contiguous_base&lt;*&gt;" Inheritable="true">
+    <Intrinsic Name="require_non_optimized_heterogeneous" Expression="sizeof(first_.p_.impl_.ptrs_.ptrs_._Myfirst) != 0"/>
+    <Intrinsic Name="non_optimized_heterogeneous_ptr_at" Expression="(i == 0) ? first_.p_.impl_.ptrs_.ptr0_ : ((void**)&amp;first_.p_.impl_.ptrs_.ptrs_)[sizeof(first_.p_.impl_.ptrs_.ptrs_)/sizeof(void*) - i]">
+      <Parameter Name="i" Type="int"/>
+    </Intrinsic>
+    <Intrinsic Name="non_optimized_heterogeneous_first00" Expression="($T2* )non_optimized_heterogeneous_ptr_at( 0) + first_.p_.impl_.i_"/>
+    <Intrinsic Name="non_optimized_heterogeneous_first01" Expression="($T3* )non_optimized_heterogeneous_ptr_at( 1) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_first02" Expression="($T4* )non_optimized_heterogeneous_ptr_at( 2) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_first03" Expression="($T5* )non_optimized_heterogeneous_ptr_at( 3) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_first04" Expression="($T6* )non_optimized_heterogeneous_ptr_at( 4) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_first05" Expression="($T7* )non_optimized_heterogeneous_ptr_at( 5) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_first06" Expression="($T8* )non_optimized_heterogeneous_ptr_at( 6) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_first07" Expression="($T9* )non_optimized_heterogeneous_ptr_at( 7) + first_.p_.impl_.i_" Optional="true"/>
+    <Intrinsic Name="non_optimized_heterogeneous_last00" Expression="($T2* )last_.p_.impl_.ptrs_.ptr0_ + last_.p_.impl_.i_"/>
+    <Intrinsic Name="non_optimized_heterogeneous_cap00"  Expression="($T2* ) cap_.p_.impl_.ptrs_.ptr0_ +  cap_.p_.impl_.i_"/>
+    <Intrinsic Name="non_optimized_heterogeneous_size"     Expression="non_optimized_heterogeneous_last00() - non_optimized_heterogeneous_first00()"/>
+    <Intrinsic Name="non_optimized_heterogeneous_capacity" Expression="non_optimized_heterogeneous_cap00()  - non_optimized_heterogeneous_first00()"/>
+    <DisplayString>{{ size={non_optimized_heterogeneous_size()} }}</DisplayString>
+    <Expand>
+      <Item Name="[capacity]" ExcludeView="simple">non_optimized_heterogeneous_capacity()</Item>
+      <Item Name="[allocator]" ExcludeView="simple">alloc_</Item>
+      <Synthetic Name="&lt;0&gt;">
+        <Expand>
+          <ArrayItems>
+            <Size>non_optimized_heterogeneous_size()</Size>
+            <ValuePointer>non_optimized_heterogeneous_first00()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;1&gt;" Condition="sizeof($T3) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>non_optimized_heterogeneous_size()</Size>
+            <ValuePointer>non_optimized_heterogeneous_first01()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;2&gt;" Condition="sizeof($T4) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>non_optimized_heterogeneous_size()</Size>
+            <ValuePointer>non_optimized_heterogeneous_first02()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;3&gt;" Condition="sizeof($T5) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>non_optimized_heterogeneous_size()</Size>
+            <ValuePointer>non_optimized_heterogeneous_first03()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;4&gt;" Condition="sizeof($T6) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>non_optimized_heterogeneous_size()</Size>
+            <ValuePointer>non_optimized_heterogeneous_first04()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;5&gt;" Condition="sizeof($T7) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>non_optimized_heterogeneous_size()</Size>
+            <ValuePointer>non_optimized_heterogeneous_first05()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;6&gt;" Condition="sizeof($T8) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>non_optimized_heterogeneous_size()</Size>
+            <ValuePointer>non_optimized_heterogeneous_first06()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="&lt;7&gt;" Condition="sizeof($T9) != 0" Optional="true">
+        <Expand>
+          <ArrayItems>
+            <Size>non_optimized_heterogeneous_size()</Size>
+            <ValuePointer>non_optimized_heterogeneous_first07()</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+    </Expand>
+  </Type>
+
+</AutoVisualizer>

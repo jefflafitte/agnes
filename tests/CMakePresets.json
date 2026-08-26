@@ -1,0 +1,244 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": { "CMAKE_EXPORT_COMPILE_COMMANDS": "ON" }
+    },
+    {
+      "name": "linux-base",
+      "hidden": true,
+      "inherits": "base",
+      "generator": "Ninja"
+    },
+    {
+      "name": "clang-base",
+      "hidden": true,
+      "inherits": "linux-base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
+      "name": "gcc-base",
+      "hidden": true,
+      "inherits": "linux-base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "clang-debug",
+      "inherits": "clang-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "clang-debug-const-eval",
+      "inherits": "clang-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "DebugConstEval" }
+    },
+    {
+      "name": "clang-release",
+      "inherits": "clang-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    },
+    {
+      "name": "clang-release-const-eval",
+      "inherits": "clang-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "ReleaseConstEval" }
+    },
+    {
+      "name": "gcc-debug",
+      "inherits": "gcc-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "gcc-debug-const-eval",
+      "inherits": "gcc-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "DebugConstEval" }
+    },
+    {
+      "name": "gcc-release",
+      "inherits": "gcc-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    },
+    {
+      "name": "gcc-release-const-eval",
+      "inherits": "gcc-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "ReleaseConstEval" }
+    },
+    {
+      "name": "msvc",
+      "inherits": "base",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "clang-debug",
+      "configurePreset": "clang-debug"
+    },
+    {
+      "name": "clang-debug-const-eval",
+      "configurePreset": "clang-debug-const-eval"
+    },
+    {
+      "name": "clang-release",
+      "configurePreset": "clang-release"
+    },
+    {
+      "name": "clang-release-const-eval",
+      "configurePreset": "clang-release-const-eval"
+    },
+    {
+      "name": "gcc-debug",
+      "configurePreset": "gcc-debug"
+    },
+    {
+      "name": "gcc-debug-const-eval",
+      "configurePreset": "gcc-debug-const-eval"
+    },
+    {
+      "name": "gcc-release",
+      "configurePreset": "gcc-release"
+    },
+    {
+      "name": "gcc-release-const-eval",
+      "configurePreset": "gcc-release-const-eval"
+    },
+    {
+      "name": "msvc-debug",
+      "configurePreset": "msvc",
+      "configuration": "Debug"
+    },
+    {
+      "name": "msvc-debug-const-eval",
+      "configurePreset": "msvc",
+      "configuration": "DebugConstEval"
+    },
+    {
+      "name": "msvc-release",
+      "configurePreset": "msvc",
+      "configuration": "Release"
+    },
+    {
+      "name": "msvc-release-const-eval",
+      "configurePreset": "msvc",
+      "configuration": "ReleaseConstEval"
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "clang-debug",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "clang-debug"
+        },
+        {
+          "type": "build",
+          "name": "clang-debug"
+        }
+      ]
+    },
+    {
+      "name": "clang-debug-const-eval",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "clang-debug-const-eval"
+        },
+        {
+          "type": "build",
+          "name": "clang-debug-const-eval"
+        }
+      ]
+    },
+    {
+      "name": "clang-release",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "clang-release"
+        },
+        {
+          "type": "build",
+          "name": "clang-release"
+        }
+      ]
+    },
+    {
+      "name": "clang-release-const-eval",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "clang-release-const-eval"
+        },
+        {
+          "type": "build",
+          "name": "clang-release-const-eval"
+        }
+      ]
+    },
+    {
+      "name": "gcc-debug",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "gcc-debug"
+        },
+        {
+          "type": "build",
+          "name": "gcc-debug"
+        }
+      ]
+    },
+    {
+      "name": "gcc-debug-const-eval",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "gcc-debug-const-eval"
+        },
+        {
+          "type": "build",
+          "name": "gcc-debug-const-eval"
+        }
+      ]
+    },
+    {
+      "name": "gcc-release",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "gcc-release"
+        },
+        {
+          "type": "build",
+          "name": "gcc-release"
+        }
+      ]
+    },
+    {
+      "name": "gcc-release-const-eval",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "gcc-release-const-eval"
+        },
+        {
+          "type": "build",
+          "name": "gcc-release-const-eval"
+        }
+      ]
+    }
+  ]
+}
